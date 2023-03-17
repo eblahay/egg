@@ -1,7 +1,7 @@
-# EGG: Ethan's Gtkmm-based imaGe viewer
+# EGG: Ethan's Good imaGe viewer
 
 ## Description
-EGG is a simplistic image-viewing application.
+EGG will be a simplistic image-viewing application.
 
 ## Licensing
  - EGG: [GPLv3 or later](LICENSE.md)
