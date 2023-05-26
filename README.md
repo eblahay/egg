@@ -1,7 +1,7 @@
-# EGG: Ethan's Good imaGe viewer
+# Eyren
 
 ## Description
-EGG will be a simplistic image-viewing application.
+Eyren will be a simplistic image-viewing application.
 
 ## Licensing
- - EGG: [GPLv3 or later](LICENSE.md)
+ - Eyren: [GPLv3 or later](LICENSE.md)
