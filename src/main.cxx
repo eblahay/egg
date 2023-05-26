@@ -1,3 +1,4 @@
+#include <boost/program_options/positional_options.hpp>
 #include <iostream>
 #include <filesystem>
 
@@ -17,8 +18,11 @@ int main(int argc, char* argv[]){
         ("path", po::value<std::filesystem::path>(), "filepath to image file to be loaded")
     ;
 
+    po::positional_options_description p;
+    p.add("path", -1);
+
     po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(cmdln_opts).run(), vm);
+    po::store(po::command_line_parser(argc, argv).options(cmdln_opts).positional(p).run(), vm);
     po::notify(vm);
 
     if(vm.count("help")){
