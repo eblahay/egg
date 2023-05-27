@@ -22,8 +22,6 @@ eyren::ImageArea::~ImageArea(){
 
 void eyren::ImageArea::loadFromFile(const std::filesystem::path &path){
     try{
-        std::cout << path << '\n';
-
         if(!path.empty()){
             img = Gdk::Pixbuf::create_from_file(path);
             f_loaded = true;
