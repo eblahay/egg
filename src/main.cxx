@@ -1,3 +1,4 @@
+#include "giomm/application.h"
 #include <boost/program_options/positional_options.hpp>
 #include <iostream>
 #include <filesystem>
@@ -19,7 +20,7 @@ int main(int argc, char* argv[]){
     ;
 
     po::positional_options_description p;
-    p.add("path", -1);
+    p.add("path", 1);
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(cmdln_opts).positional(p).run(), vm);
@@ -44,6 +45,8 @@ int main(int argc, char* argv[]){
         Gtk::Application::create(argc, argv, "application.eyren")
     ;
     
+    app->set_flags(Gio::APPLICATION_NON_UNIQUE);
+
     eyren::MainWindow window(path);
 
     return app->run(window);
