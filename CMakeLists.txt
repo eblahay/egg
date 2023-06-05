@@ -19,6 +19,7 @@ set(
     src/main.cxx
     src/MainWindow.cxx
     src/ImageArea.cxx
+    src/MenuBar.cxx
 )
 add_executable(eyren ${APP_SRC})
 target_link_libraries(eyren Boost::program_options ${GTKMM_LIBRARIES})

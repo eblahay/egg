@@ -4,16 +4,20 @@
 #include "glibmm/error.h"
 #include "gtkmm/drawingarea.h"
 #include "gtkmm/enums.h"
+#include <cstddef>
 #include <eyren/ImageArea.hxx>
 
+#include <filesystem>
 #include <giomm/resource.h>
 
 #include <glib/gerror.h>
 
 #include <iostream>
+#include <stdexcept>
 
 eyren::ImageArea::ImageArea():
-    f_loaded(false)
+    f_loaded(false),
+    curr_path_i(0)
 {}
 
 eyren::ImageArea::~ImageArea(){
@@ -39,6 +43,43 @@ void eyren::ImageArea::loadFromFile(const std::filesystem::path &path){
     catch(const Glib::Error &e){
         std::cerr << "Error: " << e.what() << '\n';
     }
+}
+
+void eyren::ImageArea::load(){
+    if(!paths.empty()) loadFromFile(paths[curr_path_i]);
+    else{
+        // this is where I'd write something to a log file— maybe.
+    }
+}
+
+void eyren::ImageArea::setPaths(const std::vector<std::filesystem::path> &paths){
+    this->paths = paths;
+
+    curr_path_i = 0;
+    f_loaded = false;
+}
+
+void eyren::ImageArea::nextImg(){
+    if(++curr_path_i >= paths.size()) curr_path_i = 0;
+    load();
+}
+
+void eyren::ImageArea::prevImg(){
+    if(curr_path_i == 0) curr_path_i = paths.size() - 1;
+    else curr_path_i--;
+    load();
+}
+
+std::filesystem::path eyren::ImageArea::getCurrentPath()const{
+    return paths[curr_path_i];
+}
+
+const std::size_t& eyren::ImageArea::getCurrPathIndex()const{
+    return curr_path_i;
+}
+
+const std::vector<std::filesystem::path>& eyren::ImageArea::getPaths(){
+    return paths;
 }
 
 bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
