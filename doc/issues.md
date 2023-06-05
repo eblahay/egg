@@ -1,1 +1,0 @@
- - make eyren::ImageArea capable of handling not having an image to load
