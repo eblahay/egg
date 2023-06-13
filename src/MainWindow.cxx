@@ -50,6 +50,7 @@ bool eyren::MainWindow::onKeyPress(GdkEventKey* e){
             }
 
             break;
+        case 113: // 'Q' Key
         case 65307: // Esc Key
             close();
             break;
