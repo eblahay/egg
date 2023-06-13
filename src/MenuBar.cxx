@@ -13,8 +13,6 @@ eyren::MenuBar::MenuBar(){
 
     add(file.menu_item);
 
-    /* Let's not worry about this for now...
-
     // help
     help.menu_item.set_label("Help");
 
@@ -28,6 +26,7 @@ eyren::MenuBar::MenuBar(){
 
     help.about_dialog.set_program_name("Eyren");
     help.about_dialog.set_version("alpha");
+    help.about_dialog.set_license_type(Gtk::LICENSE_GPL_3_0);
     help.about_dialog.hide();
 
     help.about.signal_activate().connect(
@@ -36,5 +35,4 @@ eyren::MenuBar::MenuBar(){
             &Gtk::AboutDialog::show
         )
     );
-    */
 }
