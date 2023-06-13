@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
         cmdln_opts.add_options()
             ("help", "prints this message")
             ("version", "prints program version information")
-            ("path", po::value<std::vector<std::filesystem::path>>(), "filepath to image file to be loaded")
+            ("path", po::value<std::vector<std::string>>(), "filepath to image file to be loaded")
         ;
 
         po::positional_options_description p;
@@ -40,7 +40,18 @@ int main(int argc, char* argv[]){
 
         //
         std::vector<std::filesystem::path> paths;
-        if(vm.count("path")) paths = vm["path"].as<std::vector<std::filesystem::path>>();
+        if(vm.count("path")){
+            /*
+                This is a work-around for what I assume is an error in
+                boost::program_options version 1.74.0, where std::filesystem::path (unlike std::string)
+                does not have a parsing operation capable of handling arguments which have spaces.
+            */
+
+            auto arr = vm["path"].as<std::vector<std::string>>();
+            for(auto it = arr.begin(); it != arr.end(); it++){
+                paths.push_back({*it});
+            }
+        }
 
         // set up window
         argc = 1;
