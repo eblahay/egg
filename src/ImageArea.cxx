@@ -133,13 +133,13 @@ bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     Glib::RefPtr<Gdk::Pixbuf> img_scaled = img->scale_simple(
         scaled_img_width, 
         scaled_img_height, 
-        Gdk::INTERP_BILINEAR    
+        Gdk::INTERP_BILINEAR   
     );
 
     Gdk::Cairo::set_source_pixbuf(
         cr, img_scaled,
-        (get_allocated_width() / 2) - (scaled_img_width / 2), 
-        (get_allocated_height() / 2) - (scaled_img_height / 2)
+        ((double)get_allocated_width() / 2) - ((double)scaled_img_width / 2), 
+        ((double)get_allocated_height() / 2) - ((double)scaled_img_height / 2)
     );
     
     cr->paint();
