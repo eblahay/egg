@@ -11,6 +11,7 @@ eyren::MainWindow::MainWindow(std::vector<std::filesystem::path> paths){
 
     updateTitle();
     set_default_size(800, 600);
+    set_icon_name("multimedia-photo-viewer");
 
     // add widgets
     box_0.pack_start(menubar, false, false);
