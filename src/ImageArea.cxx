@@ -22,6 +22,8 @@
 #include "glibmm/error.h"
 #include "gtkmm/drawingarea.h"
 #include "gtkmm/enums.h"
+#include "gtkmm/widget.h"
+#include "sigc++/functors/mem_fun.h"
 #include <array>
 #include <cstddef>
 #include <eyren/ImageArea.hxx>
@@ -39,7 +41,14 @@ eyren::ImageArea::ImageArea():
     f_loaded(false),
     curr_path_i(0),
     scaling_mode(fit_to_widget)
-{}
+{
+    signal_size_allocate().connect(
+        sigc::mem_fun(
+            *this,
+            &eyren::ImageArea::on_my_size_allocate
+        )
+    );
+}
 
 eyren::ImageArea::~ImageArea(){
     
@@ -171,15 +180,6 @@ bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     // check loaded flag
     if(!f_loaded) return true;
 
-    // scale image based on widget's size
-    switch(scaling_mode){
-        case fit_to_widget:
-            scaleFitToWidget();
-            break;
-        default:
-            break;
-    }
-
     Glib::RefPtr<Gdk::Pixbuf> img_scaled = img->scale_simple(
         scaled_dm[0], 
         scaled_dm[1], 
@@ -195,4 +195,15 @@ bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     cr->paint();
 
     return true;
+}
+
+void eyren::ImageArea::on_my_size_allocate(Gtk::Allocation &allocation){
+    // scale image based on widget's size
+    switch(scaling_mode){
+        case fit_to_widget:
+            scaleFitToWidget();
+            break;
+        default:
+            break;
+    }
 }

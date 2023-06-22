@@ -85,8 +85,12 @@ bool eyren::MainWindow::onKeyPress(GdkEventKey* e){
             img_area.setScalingMode(eyren::ImageArea::fit_to_widget);
             img_area.queue_draw();
             break;
+        case 111: // 'O' Key
+            img_area.scale(1);
+            img_area.queue_draw();
+            break;
         default:
-            std::cout << e->keyval << '\n';
+            std::cout << e->keyval << '\n'; // this is here for testing purposes
             break;
     }
 

@@ -72,6 +72,8 @@ namespace eyren {
 
             // Override default signal handler
             bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+            void on_my_size_allocate(Gtk::Allocation &allocation);
         
             // contains pixels which make up the image
             Glib::RefPtr<Gdk::Pixbuf> img;
