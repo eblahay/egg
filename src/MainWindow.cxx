@@ -73,6 +73,18 @@ bool eyren::MainWindow::onKeyPress(GdkEventKey* e){
         case 65307: // Esc Key
             close();
             break;
+        case 65362: // Up-Arrow Key
+            img_area.scaleUp();
+            img_area.queue_draw();
+            break;
+        case 65364: // Down-Arrow Key
+            img_area.scaleDown();
+            img_area.queue_draw();
+            break;
+        case 102: // 'F' Key
+            img_area.setScalingMode(eyren::ImageArea::fit_to_widget);
+            img_area.queue_draw();
+            break;
         default:
             std::cout << e->keyval << '\n';
             break;

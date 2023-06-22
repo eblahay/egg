@@ -22,6 +22,7 @@
 #include "glibmm/error.h"
 #include "gtkmm/drawingarea.h"
 #include "gtkmm/enums.h"
+#include <array>
 #include <cstddef>
 #include <eyren/ImageArea.hxx>
 
@@ -32,10 +33,12 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <cmath>
 
 eyren::ImageArea::ImageArea():
     f_loaded(false),
-    curr_path_i(0)
+    curr_path_i(0),
+    scaling_mode(fit_to_widget)
 {}
 
 eyren::ImageArea::~ImageArea(){
@@ -100,11 +103,33 @@ const std::vector<std::filesystem::path>& eyren::ImageArea::getPaths(){
     return paths;
 }
 
-bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-    // check loaded flag
-    if(!f_loaded) return true;
+const float& eyren::ImageArea::getScaleFactor()const{
+    return scale_factor;
+}
 
-    // scale image based on widget's size
+void eyren::ImageArea::scaleUp(){
+    scale(scale_factor + 0.1);
+}
+
+void eyren::ImageArea::scaleDown(){
+    scale(scale_factor - 0.1);
+}
+
+void eyren::ImageArea::setScalingMode(const ScalingMode &mode){
+    scaling_mode = mode;
+}
+
+void eyren::ImageArea::scale(const float &f){
+    setScalingMode(fractional);
+    scale_factor = f;
+
+    unsigned int area = img->get_width() * img->get_height() * f;
+
+    scaled_dm[1] = std::sqrt(((float)img->get_height() / (float)img->get_width()) * area);
+    scaled_dm[0] = area / scaled_dm[1];
+}
+
+void eyren::ImageArea::scaleFitToWidget(){
     int 
         scaled_img_width,
         scaled_img_height
@@ -125,21 +150,46 @@ bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
     else{
         // allocated height is greater than allocated width
 
+        std::cout << img->get_width() << " / " << get_allocated_width() << " = " << img->get_width() / get_allocated_width() << '\n';
+
         scaled_img_width = get_allocated_width();
         scaled_img_height = (int)((float)get_allocated_width() / (float)img->get_width() * img->get_height());
 
+        std::cout << img->get_height() << " -> " << scaled_img_height << '\n';
+
+    }
+
+    scaled_dm = {
+        static_cast<unsigned int>(scaled_img_width),
+        static_cast<unsigned int>(scaled_img_height)
+    };
+
+    scale_factor = (float)(scaled_dm[0] * scaled_dm[1]) / (float)(img->get_width() * img->get_height());
+}
+
+bool eyren::ImageArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+    // check loaded flag
+    if(!f_loaded) return true;
+
+    // scale image based on widget's size
+    switch(scaling_mode){
+        case fit_to_widget:
+            scaleFitToWidget();
+            break;
+        default:
+            break;
     }
 
     Glib::RefPtr<Gdk::Pixbuf> img_scaled = img->scale_simple(
-        scaled_img_width, 
-        scaled_img_height, 
+        scaled_dm[0], 
+        scaled_dm[1], 
         Gdk::INTERP_BILINEAR   
     );
 
     Gdk::Cairo::set_source_pixbuf(
         cr, img_scaled,
-        ((double)get_allocated_width() / 2) - ((double)scaled_img_width / 2), 
-        ((double)get_allocated_height() / 2) - ((double)scaled_img_height / 2)
+        ((double)get_allocated_width() / 2) - ((double)scaled_dm[0] / 2), 
+        ((double)get_allocated_height() / 2) - ((double)scaled_dm[1] / 2)
     );
     
     cr->paint();

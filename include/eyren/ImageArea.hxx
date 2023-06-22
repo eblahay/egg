@@ -25,12 +25,15 @@
 
 #include <filesystem>
 #include <vector>
+#include <array>
 
 namespace eyren {
     class ImageArea: public Gtk::DrawingArea{    
         public:
             ImageArea();
             virtual ~ImageArea();
+
+            enum ScalingMode {fit_to_widget, fractional};
 
             // load image from specified file (note: does NOT save specified path)
             void loadFromFile(const std::filesystem::path &path);
@@ -52,19 +55,39 @@ namespace eyren {
             const std::size_t& getCurrPathIndex()const;
 
             const std::vector<std::filesystem::path>& getPaths();
-        
+
+            const float& getScaleFactor()const;
+
+            void scaleUp();
+            
+            void scaleDown();
+
+            void setScalingMode(const ScalingMode &mode);
+
+            // scale by float; i.e. scale(0.25) scales to 25%
+            void scale(const float &f);
+
         protected:
+            void scaleFitToWidget();
+
             // Override default signal handler
             bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
         
             // contains pixels which make up the image
             Glib::RefPtr<Gdk::Pixbuf> img;
 
+            // img scaled dimensions
+            std::array<unsigned int, 2> scaled_dm;
+
             std::vector<std::filesystem::path> paths;
 
             // current path index
             std::size_t curr_path_i; // defaults to [0]
 
+            ScalingMode scaling_mode;
+
             bool f_loaded;
+
+            float scale_factor;
     };
 }
